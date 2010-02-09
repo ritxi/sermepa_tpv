@@ -1,0 +1,14 @@
+development:
+  merchant_code:  '234561232'
+  merchant_url:   'http://www.development.cat'
+  key:            'qwertyasFAKE23456789'
+  
+production:
+  merchant_code:  '234561232'
+  merchant_url:   'http://www.production.cat'
+  key:            'lsdkjfgdFAKE34534234'
+
+test:
+  merchant_code:  '234561232'
+  merchant_url:   'http://www.test.cat'
+  key:            'alñkdsjfFAKEfj345345'
