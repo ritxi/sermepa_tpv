@@ -1,4 +1,5 @@
 <?
+  //define('MODE','production'); //Uncomment when the app is ready for production
   include('classes/payment.php');
   $payment = new Payment(400, 'Inscripcio');
   $options = $payment->getOptions();

@@ -4,27 +4,26 @@ Change **BASE** constant from *classes/constants.php* to fit your files location
 
 You have to change *config/tpv.yml* with your basic configuration. 
 
-
 ##Available options
 
-This file accepts the following options:
+*config/tpv.yml* file accepts the following options:
 
 ###Mandatory
 
 * merchant_code 
-* merchant_url 
 * key 
 
 ###Optional
 
-* currency 
-* terminal 
-* transaction_type 
-* language 
-* notification_url 
-* KO_url 
-* OK_url 
-* merchant_name 
+* *Property*  -> *Default value*
+* currency          -> CURRENCY_EUR
+* terminal          -> 1
+* transaction_type  -> 0(Authorization) 
+* language          -> LANG_CATALAN
+* notification_url  -> ''
+* KO_url            -> ''
+* OK_url            -> ''
+* merchant_name     -> ''
 
 ###Available constants
 
@@ -50,11 +49,27 @@ This file accepts the following options:
 * LANG_GALICIAN 
 * LANG_BASQUE 
 
+#Using notification_url
+
+To use this option you must activate **HTTP Form** notification on your sermepa control panel.
+
+Add **notification_url** to *config/tpv.yml*
+
+    development:
+      ...
+      notification_url: 'http://mywebsite.com/payment_notification.php'
+    
+    production:
+      ...
+      notification_url: 'http://mywebsite.com/payment_notification.php'
+
+*payment_notification.php* file has only few lines on how to implement it and what functions might be useful.
+
 #Setting your TPV to production mode
 
-If you want to set your tpv app to production add **define('MODE','production');** at the beginning of *prova.php*.
+If you want to set your tpv app to production uncomment **define('MODE','production');** at the beginning of *prova.php* and *payment_notification.php*.
     <?
-    define('MODE','production');
+    //define('MODE','production');
     include('classes/payment.php');
     ...
     ?>

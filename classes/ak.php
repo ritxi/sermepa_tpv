@@ -48,7 +48,7 @@ class Ak{
 
       if(!$result = file_put_contents($base_path.$file_name, $content)){
           if(!empty($content)){
-              trigger_error(Ak::t("Could not write to file: %file_name. Please change file/dir permissions or enable FTP file handling on your Akelos application.", array('%file_name' => '"'.$base_path.$file_name.'"')),  E_USER_ERROR);
+              trigger_error("Could not write to file: $base_path.$file_name. Please change file/dir permissions or enable FTP file handling on your Akelos application.",  E_USER_ERROR);
           }
       }
       return $result;

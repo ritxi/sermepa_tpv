@@ -204,7 +204,7 @@ class AkConfig
         $yaml_file_name = $this->_generateConfigFileName($namespace);
         if (!file_exists($yaml_file_name)){
             if($raise_error_if_config_file_not_found){
-                trigger_error(Ak::t('Could not find %namespace settings file in %path.', array('%namespace'=>$namespace, '%path'=>$yaml_file_name)).' '.Ak::getFileAndNumberTextForError(1)."\n", E_USER_ERROR);
+                trigger_error("Could not find $namespace settings file in $yaml_file_name.\n", E_USER_ERROR);
             }
             return false;
         }
