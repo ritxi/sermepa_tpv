@@ -31,7 +31,7 @@ You have to change *config/tpv.yml* with your basic configuration.
 
 * CURRENCY_EUR -> Euro 
 * CURRENCY_USD -> Dolar US 
-* CURRENCY_PUK -> British Pound 
+* CURRENCY_GBP -> British Pound 
 * CURRENCY_YEN -> Japanese Yen 
 
 ####Language constants

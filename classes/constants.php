@@ -1,5 +1,5 @@
 <?
-defined('BASE')                || define('BASE', '/Users/ricard/develop/ues_tpv');
+defined('BASE')                || define('BASE', '/Users/ricard/develop/sermepa_tpv');
 defined('DS')                  || define('DS', '/');
 defined('TMP_DIR')             || define('TMP_DIR',BASE.DS.'tmp');
 defined('TPV_CONFIG_DIR')      || define('TPV_CONFIG_DIR',BASE.DS.'config');
@@ -16,6 +16,9 @@ defined('TPV_ENABLE_PROFILER') || define('TPV_ENABLE_PROFILER', false);
 defined('TPV_WIN')             || define('TPV_WIN', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
 defined('TPV_OS')              || define('TPV_OS', TPV_WIN ? 'WINDOWS' : 'UNIX');
 
+
+
+
 define('LANG_CASTILIAN',  '001');
 define('LANG_ENGLISH',    '002');
 define('LANG_CATALAN',    '003');
@@ -31,6 +34,6 @@ define('LANG_BASQUE',     '013');
 
 define('CURRENCY_EUR',    978); //EURO
 define('CURRENCY_USD',    840); //Dolar US
-define('CURRENCY_PUK',    826); //British Pound
+define('CURRENCY_GBP',    826); //British Pound
 define('CURRENCY_YEN',    392); //Japanese Yen
 ?>
