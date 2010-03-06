@@ -1,4 +1,4 @@
 tmp
-tests/simpletest
+php/tests/simpletest
 config/tpv.yml
 .DS_Store
