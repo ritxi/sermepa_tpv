@@ -24,13 +24,15 @@ class TestOfPayment < Test::Unit::TestCase
       payment.setKoUrl('ko url')
       assert_equal(payment.getOptions.size, 13)
     end
-    def test_GetHtmlHiddenField
+    def test_GetHtmlHiddenFieldAndForm
       payment = Payment.new(20,'Inscripcio')
+      assert_equal "<form action='https://sis-t.sermepa.es:25443/sis/realizarPago' method='post' >\n", payment.form
+      
       expected_field = "<input type='hidden' value='2000' name='Ds_Merchant_Amount' id='Ds_Merchant_Amount' />"
       options = payment.getOptions
       option = options.first
       given_field = Payment.hidden_field(option[0],option[1])
-      assert_equal(given_field, expected_field)
+      assert_equal given_field, expected_field
     end
     def test_payment_amount
       payment = Payment.new(12.35,'Inscripcio','29292929')

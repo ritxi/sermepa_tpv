@@ -177,15 +177,8 @@ class Payment
 
     return "<input type='hidden' value='#{value}' name='#{name}' id='#{name}' />";
   end
-  def form(&block)
-    if block_given?
+  def form
     form = "<form action='#{@tpvurl}' method='post' >\n"
-    form << "  "+yield+"\n"
-    form << "</form>"
-    return form
-    else
-      raise "block must be given"
-    end
   end
 private
   def load_config
