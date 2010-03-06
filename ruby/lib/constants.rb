@@ -8,7 +8,7 @@ defined?( TPV_AVAILABLE_MODES) || TPV_AVAILABLE_MODES = %w(setup testing develop
 #efined?( TPV_CAN_FORK       ) || TPV_CAN_FORK', function_exists('pcntl_fork')
 defined?( TPV_MODE           ) || (defined?(RAILS_ENV) && TPV_MODE = RAILS_ENV) || TPV_MODE = 'development'
 defined?( TPV_DEV_MODE       ) || TPV_DEV_MODE =        TPV_MODE == 'development'
-defined?( TPV_TEST_MODE      ) || TPV_TEST_MODE =       TPV_MODE == 'testing'
+defined?( TPV_TEST_MODE      ) || TPV_TEST_MODE =       (TPV_MODE == 'testing' || TPV_MODE == 'test')
 defined?( TPV_STAGING_MODE   ) || TPV_STAGING_MODE =    TPV_MODE == 'staging'
 defined?( TPV_PRODUCTION_MODE) || TPV_PRODUCTION_MODE = TPV_MODE == 'production'
 #defined? TPV_ENABLE_PROFILER || TPV_ENABLE_PROFILER', false);
