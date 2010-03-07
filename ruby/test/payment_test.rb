@@ -1,6 +1,6 @@
 TPV_MODE = 'testing'
 require "test/unit"
-require '../lib/payment'
+require "#{File.dirname(__FILE__)}/../lib/payment"
 
 class TestOfPayment < Test::Unit::TestCase
     

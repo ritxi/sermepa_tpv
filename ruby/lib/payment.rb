@@ -1,10 +1,9 @@
 require 'YAML'
 require 'ERB'
 require 'digest/sha1'
-require 'constants'
+require "#{File.dirname(__FILE__)}/constants"
+
 class Payment
-
-
   def initialize(amount='', description='', order_id='')
     #Payment properties
     @amount = ''

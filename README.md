@@ -1,6 +1,8 @@
 # Configuration
 
-Change **BASE** constant from *classes/constants.php* to fit your files location.
+Change **BASE** constant from *php/classes/constants.php* or *ruby/lib/constants.rb* to fit your files location.
+
+NOTE: if using Ruby on Rails, BASE is set to RAILS_ROOT
 
 You have to change *config/tpv.yml* with your basic configuration. 
 
@@ -15,15 +17,15 @@ You have to change *config/tpv.yml* with your basic configuration.
 
 ###Optional
 
-* *Property*  -> *Default value*
-* currency          -> CURRENCY_EUR
-* terminal          -> 1
-* transaction_type  -> 0(Authorization) 
-* language          -> LANG_CATALAN
-* notification_url  -> ''
-* KO_url            -> ''
-* OK_url            -> ''
-* merchant_name     -> ''
+* *Property*       -> *Default value*
+* currency         ->  CURRENCY_EUR
+* terminal         ->  1
+* transaction_type ->  0(Authorization) 
+* language         ->  LANG_CATALAN
+* notification_url ->  ''
+* KO_url           ->  ''
+* OK_url           ->  ''
+* merchant_name    ->  ''
 
 ###Available constants
 
@@ -67,6 +69,8 @@ Add **notification_url** to *config/tpv.yml*
 
 #Setting your TPV to production mode
 
+##PHP
+
 If you want to set your tpv app to production uncomment **define('MODE','production');** at the beginning of *prova.php* and *payment_notification.php*.
     <?
     //define('MODE','production');
@@ -74,8 +78,17 @@ If you want to set your tpv app to production uncomment **define('MODE','product
     ...
     ?>
 
+##Ruby
+
+When running in Rails it will take RAILS_ENV constant. Otherwise TPV_MODE = 'production' must be set before loading *payment.rb*.
+
 # Executing tests
 
-*Simpletest* library 1.0.1 is needed. It can be downloaded from [http://simpletest.org](SimpleTest Website)
+##PHP
+*Simpletest* library 1.0.1 is needed for php version. It can be downloaded from [http://simpletest.org](SimpleTest Website)
 
 Unpack simpletest into **/tests** folder and then execute */tests/payment_test.php* from your webbrowser
+
+##Ruby
+
+Just run payment_test.rb from textmate(cmd+R)
