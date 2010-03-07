@@ -71,7 +71,7 @@ class Payment
     Payment.getAcklogedgeFields.each {|field| return false unless post.key?(field)}
 
     @bank_server_response = post["Ds_Response"]
-    message = Payment.sha1("#{post['Ds_Amount']}#{post['Ds_Order']}#{post['Ds_MerchantCode']}#{post['Ds_Currency']}#{post['Ds_Response']}#{@key}");
+    message = Payment.sha1("#{post['Ds_Amount']}#{post['Ds_Order']}#{post['Ds_MerchantCode']}#{post['Ds_Currency']}#{post['Ds_Response']}#{@key}")
     @amount = post["Ds_Amount"]
     setOrderId(post["Ds_Order"])
     setCurrency(post["Ds_Currency"])
@@ -173,8 +173,7 @@ class Payment
   end
   #Form helpers
   def self.hidden_field(name,value)
-
-    return "<input type='hidden' value='#{value}' name='#{name}' id='#{name}' />";
+    return "<input type='hidden' value='#{value}' name='#{name}' id='#{name}' />"
   end
   def form
     form = "<form action='#{@tpvurl}' method='post' >\n"
