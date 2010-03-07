@@ -91,4 +91,4 @@ Unpack simpletest into **/tests** folder and then execute */tests/payment_test.p
 
 ##Ruby
 
-Just run payment_test.rb from textmate(cmd+R)
+Just run payment_test.rb from textmate(cmd+R) or run manually "ruby payment_test.rb"
