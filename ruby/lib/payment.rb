@@ -163,7 +163,7 @@ class Payment
   end
   def getSignature
     if @signature.empty?
-      #Ds_Merchant_Amount + Ds_Merchant_Order +Ds_Merchant_MerchantCode + DS_Merchant_Currency +Ds_Merchant_TransactionType +	Ds_Merchant_MerchantURL + CLAVE SECRETA
+      #Ds_Merchant_Amount + Ds_Merchant_Order +Ds_Merchant_MerchantCode + Ds_Merchant_Currency +Ds_Merchant_TransactionType +	Ds_Merchant_MerchantURL + CLAVE SECRETA
       @signature = Payment.sha1("#{getAmount}#{getOrderId}#{@merchant_code}#{@currency}#{@transaction_type}#{getNotificationUrl}#{@key}")
     end
     return @signature
@@ -182,7 +182,7 @@ class Payment
 private
   def load_config
     if(@config.empty?)
-      file = TPV_CONFIG_DIR+DS+'tpv.yml'
+      file = File.join(TPV_CONFIG_DIR,'tpv.yml')
       raise 'tpv.yml is missing' unless File.exist?(file)
       @config = YAML::load(ERB.new(IO.read(file)).result)
       @config.each_pair do |conf, value|

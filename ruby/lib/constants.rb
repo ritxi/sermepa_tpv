@@ -1,8 +1,7 @@
 
 defined?( BASE               ) || (defined?(RAILS_ROOT) && BASE = RAILS_ROOT) || BASE = '/Users/ricard/develop/sermepa_tpv'
-defined?( DS                 ) || DS = '/'
-defined?( TMP_DIR            ) || TMP_DIR = BASE+DS+'tmp'
-defined?( TPV_CONFIG_DIR     ) || TPV_CONFIG_DIR = BASE+DS+'config'
+defined?( TMP_DIR            ) || TMP_DIR = File.join(BASE,'tmp')
+defined?( TPV_CONFIG_DIR     ) || TPV_CONFIG_DIR = File.join(BASE,'config')
 defined?( TPV_AVAILABLE_MODES) || TPV_AVAILABLE_MODES = %w(setup testing development production staging)
 #defined(? TPV_WEB_REQUEST   )  || TPV_WEB_REQUEST', !empty($_SERVER['REQUEST_URI'])
 #efined?( TPV_CAN_FORK       ) || TPV_CAN_FORK', function_exists('pcntl_fork')
