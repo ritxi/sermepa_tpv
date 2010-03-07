@@ -1,4 +1,4 @@
-TPV_MODE = 'testing'
+TPV_MODE = 'test'
 require "test/unit"
 require "#{File.dirname(__FILE__)}/../lib/payment"
 
@@ -7,22 +7,23 @@ class TestOfPayment < Test::Unit::TestCase
     def test_PaymentHasMinimalFields
       payment = Payment.new(20,'Inscripcio')
       id = payment.getOrderId
-      assert_equal(id,Time.now.strftime('%Y%m%d%H%i%s'))
+      assert_equal(id,Time.now.strftime('%y%m%d%H%M%S'))
       assert_equal(payment.getAmount,"2000")
       assert_equal(payment.getDescription,'Inscripcio')
-      assert_equal(payment.getOptions.size, 9)
+      assert_equal(9, payment.getOptions.size)
+      #this last asertion can fail if notification_url or other optional setting is set in tpv.yml file
     end
     def test_PaymentHasOptionalFields
       payment = Payment.new(20,'Inscripcio')
-      assert_equal(payment.getOptions.size, 9)
+      assert_equal(9, payment.getOptions.size)
       payment.setMerchantName('Unió Excursionista de Sabadell')
-      assert_equal(payment.getOptions.size, 10)
+      assert_equal(10, payment.getOptions.size )
       payment.setNotificationUrl('testing value')
-      assert_equal(payment.getOptions.size, 11)
+      assert_equal(11, payment.getOptions.size)
       payment.setOkUrl('ok url')
-      assert_equal(payment.getOptions.size, 12)
+      assert_equal(12, payment.getOptions.size)
       payment.setKoUrl('ko url')
-      assert_equal(payment.getOptions.size, 13)
+      assert_equal(13, payment.getOptions.size)
     end
     def test_GetHtmlHiddenFieldAndForm
       payment = Payment.new(20,'Inscripcio')

@@ -158,7 +158,7 @@ class Payment
     return @description
   end
   def getOrderId(order_id='')
-    @order_id ||= order_id.empty? ? Time.now.strftime('%Y%m%d%H%i%s') : order_id
+    @order_id ||= order_id.empty? ? Time.now.strftime('%y%m%d%H%M%S') : order_id
     return @order_id
   end
   def getSignature
@@ -185,14 +185,18 @@ private
       file = File.join(TPV_CONFIG_DIR,'tpv.yml')
       raise 'tpv.yml is missing' unless File.exist?(file)
       @config = YAML::load(ERB.new(IO.read(file)).result)
-      @config.each_pair do |conf, value|
-        if Payment.getProperties.include?(conf)
-          (conf=='language' || conf=='currency') && eval("defined?(#{value})") == 'constant' && value = eval("#{value}")
-          eval("@#{conf} = value")
-          puts eval("@#{conf}")
-        else
-          @unknown_properties << conf
-        end
+      if @config.key?(TPV_MODE)
+        @config[TPV_MODE].each_pair do |conf, value|
+          if Payment.getProperties.include?(conf)
+            (conf=='language' || conf=='currency') && eval("defined?(#{value})") == 'constant' && value = eval("#{value}")
+            eval("@#{conf} = value")
+            
+          else
+            @unknown_properties << conf
+          end
+        end 
+      else
+        raise "Undefined mode '#{TPV_MODE}' in tpv.yml"
       end
     end
     @unknown_properties.size
