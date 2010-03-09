@@ -10,6 +10,8 @@ You have to change *config/tpv.yml* with your basic configuration.
 
 *config/tpv.yml* file accepts the following options:
 
+NOTE: options on tpv.yml accepts language and currency constants(ex: currency: 'CURRENCY_USD')
+
 ###Mandatory
 
 * merchant_code 

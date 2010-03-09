@@ -10,6 +10,8 @@ Cal canviar *config/tpv.yml* amb la teva configuració bàsica.
 
 El fitxer *config/tpv.yml* accepta les següents opcions:
 
+ATENCIO: a les opcions es poden especificar les constants de llengua o divisa(ex: currency: 'CURRENCY_USD')
+
 ###Obligatori
 
 * merchant_code 
@@ -33,8 +35,8 @@ El fitxer *config/tpv.yml* accepta les següents opcions:
 
 * CURRENCY_EUR -> Euro 
 * CURRENCY_USD -> Dolar US 
-* CURRENCY_GBP -> British Pound 
-* CURRENCY_YEN -> Japanese Yen 
+* CURRENCY_GBP -> Pound Britànic 
+* CURRENCY_YEN -> Yen Japonès
 
 ####Constants de llengua
 
