@@ -2,7 +2,7 @@
 
 Change **BASE** constant from *php/classes/constants.php* or *ruby/lib/constants.rb* to fit your files location.
 
-NOTE: if using Ruby on Rails, BASE is set to RAILS_ROOT
+**NOTE**: if using Ruby on Rails, BASE is set to RAILS_ROOT
 
 You have to change *config/tpv.yml* with your basic configuration. 
 
@@ -10,7 +10,7 @@ You have to change *config/tpv.yml* with your basic configuration.
 
 *config/tpv.yml* file accepts the following options:
 
-NOTE: options on tpv.yml accepts language and currency constants(ex: currency: 'CURRENCY_USD')
+**NOTE**: options on tpv.yml accepts language and currency constants(ex: currency: 'CURRENCY_USD')
 
 ###Mandatory
 
@@ -100,10 +100,10 @@ When running in Rails it will take RAILS_ENV constant. Otherwise TPV_MODE = 'pro
 # Executing tests
 
 ##PHP
-*Simpletest* library 1.0.1 is needed for php version. It can be downloaded from [http://simpletest.org](SimpleTest Website)
+*Simpletest* library 1.0.1 is needed for php version. It can be downloaded from [SimpleTest Website](http://simpletest.org)
 
 Unpack simpletest into **/tests** folder and then execute */tests/payment_test.php* from your webbrowser
 
 ##Ruby
 
-Just run payment_test.rb from textmate(cmd+R) or run manually "ruby payment_test.rb"
+Just run payment_test.rb from textmate(**cmd+R**) or run manually "**ruby payment_test.rb**"

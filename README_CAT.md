@@ -2,7 +2,7 @@
 
 Canviar la constant **BASE** de *php/classes/constants.php* o *ruby/lib/constants.rb* perquè s'adapti al lloc on es trobin els teus fitxers.
 
-ATENCIO: si empres Ruby on Rails, BASE s'inicialitzarà a RAILS_ROOT
+**ATENCIO**: si empres Ruby on Rails, BASE s'inicialitzarà a RAILS_ROOT
 
 Cal canviar *config/tpv.yml* amb la teva configuració bàsica.
 
@@ -10,7 +10,7 @@ Cal canviar *config/tpv.yml* amb la teva configuració bàsica.
 
 El fitxer *config/tpv.yml* accepta les següents opcions:
 
-ATENCIO: a les opcions es poden especificar les constants de llengua o divisa(ex: currency: 'CURRENCY_USD')
+**ATENCIO**: a les opcions es poden especificar les constants de llengua o divisa(ex: currency: 'CURRENCY_USD')
 
 ###Obligatori
 
@@ -101,10 +101,10 @@ Quan executem amb Rails agafarà la constant RAILS_ENV. En altres casos cal espe
 #Executant els tests
 
 ##PHP
-Cal la llibreria *Simpletest* 1.0.1 per PHP que pot ser descarregada del [http://simpletest.org](Web de SimpleTest)
+Cal la llibreria *Simpletest* 1.0.1 per PHP que pot ser descarregada del [Web de SimpleTest](http://simpletest.org)
 
 Descomprimeix simpletest dins la carpeta **/tests** i llavors executa */tests/payment_test.php* des del teu navegador.
 
 ##Ruby
 
-Simplement executa payment_test.rb des del textmate(cmd+R) o manualment des del terminal fer "ruby payment_test.rb"
+Simplement executa payment_test.rb des del textmate(**cmd+R**) o manualment des del terminal fer "**ruby payment_test.rb**"
