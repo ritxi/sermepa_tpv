@@ -57,6 +57,7 @@ To use this option you must activate **HTTP Form** notification on your sermepa 
 
 Add **notification_url** to *config/tpv.yml*
 
+#PHP
     development:
       ...
       notification_url: 'http://mywebsite.com/payment_notification.php'
@@ -66,6 +67,18 @@ Add **notification_url** to *config/tpv.yml*
       notification_url: 'http://mywebsite.com/payment_notification.php'
 
 *payment_notification.php* file has only few lines on how to implement it and what functions might be useful.
+
+#Ruby sinatra
+
+    development:
+      ...
+      notification_url: 'http://elmeullocweb.com/response'
+
+    production:
+      ...
+      notification_url: 'http://elmeullocweb.com/response'
+
+Just like php example, but in sample.rb on the "post '/response' do" there's an explanation on how to implement automatic payment verification.
 
 #Setting your TPV to production mode
 
