@@ -1,6 +1,7 @@
 require 'YAML'
 require 'ERB'
 require 'digest/sha1'
+OLD=true
 require "#{File.dirname(__FILE__)}/constants"
 
 class Payment
@@ -31,12 +32,15 @@ class Payment
     setAmount(amount)
     @description = description
     @order_id = getOrderId(order_id)
-    @tpvurl = TPV_PRODUCTION_MODE ? 'https://sis.sermepa.es/sis/realizarPago' : 'https://sis-t.sermepa.es:25443/sis/realizarPago'
+    @tpvurl ||= TPV_PRODUCTION_MODE ? 'https://sis.sermepa.es/sis/realizarPago' : 'https://sis-t.sermepa.es:25443/sis/realizarPago'
   end
   
   #Available properties to be loaded from config file
   def self.getProperties
     ['currency' , 'terminal' , 'transaction_type', 'merchant_code', 'key' , 'language' , 'notification_url', 'KO_url' , 'OK_url' , 'merchant_name']
+  end
+  def self.getSpecialOptions
+    ['key_file','key_code']
   end
   #Acknowledge fields that must be received
   def self.getAcklogedgeFields
@@ -168,13 +172,14 @@ class Payment
     end
     return @signature
   end
-  def getCurrency(value)
+  def getCurrency
     return @currency
   end
   #Form helpers
   def self.hidden_field(name,value)
     return "<input type='hidden' value='#{value}' name='#{name}' id='#{name}' />"
   end
+  
   def form
     form = "<form action='#{@tpvurl}' method='post' >\n"
   end
