@@ -42,7 +42,6 @@ class TestCryptModule < Test::Unit::TestCase
   def test_load_dark_key_file
     crypt = Cryptography.new(:dark_key => 'alkjsdlkñadjf')
     assert_equal("alkjsdlkñadjf", crypt.dark_key)
-    puts crypt.dark_key
     crypt.dark_key_file ='dark.test.key'
     assert_equal("06;0B;03;0D;0C;0F;0E;0E;73;73;03;03;77;05;02;06;06;1A;1F;6E", crypt.dark_key)
   end

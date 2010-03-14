@@ -3,5 +3,4 @@ test:
   terminal: '631002'
   keycode: '12345678'
   dark_key_file: 'dark.test.key'
-  tpvurl: 'https://w3.grupobbva.com/TLPV/tlpv/TLPV_pub_RecepOpModeloServidor'
   notification_url: 'http://www.development.cat'

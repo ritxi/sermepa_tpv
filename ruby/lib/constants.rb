@@ -7,9 +7,8 @@ unless defined?(TPV_LOADED)
       CONFIG_DIR = File.join(ROOT,'config')
 
       MODES = %w(setup test testing development production staging)
-      module Modes
-        defined?( CURRENT           ) || (defined?(RAILS_ENV) && CURRENT = RAILS_ENV) || CURRENT = 'development'
-      
+      module Modes #CURRENT
+        defined?(CURRENT) || (defined?(RAILS_ENV) && CURRENT = RAILS_ENV) || CURRENT = 'development'
         DEV_MODE        = CURRENT == 'development'
         TEST_MODE       = (CURRENT == 'testing' || CURRENT == 'test')
         STAGING_MODE    = CURRENT == 'staging'
@@ -41,15 +40,17 @@ unless defined?(TPV_LOADED)
       end
     end
     module Bbva
-      PAYMENT_METHODS = 4
-      CARD            = 1 #soporte
-      STATUSES        = %w(PROCESSING ACCEPTED DENIED UNPROCESSED NULLED)
-      PAYMENT_MODELS  = %w(SECURE_3D REFERENCE)
-      CHANNELS        = %w(INTERNET WAP)
-      CURRENCIES      = %w(EUR USD GBP YEN)
-      LANGUAGES       = %w(CASTILLIAN CATALAN ENGLISH FRENCH)
-      COUNTRIES       = %w(SPAIN FRANCE GREATBRITAN)
-      RESPONSES       = %w(VALID FAKE REJECT UNFORMATED)
+      PAYMENT_METHOD = 4 #mediopago
+      CARD           = 1 #soporte
+      TPVURL         = 'https://w3.grupobbva.com/TLPV/tlpv/TLPV_pub_RecepOpModeloServidor'
+      STATUSES       = %w(PROCESSING ACCEPTED DENIED UNPROCESSED NULLED)
+      PAYMENT_MODELS = %w(SECURE_3D REFERENCE)
+      CHANNELS       = %w(INTERNET WAP)
+      CURRENCIES     = %w(EUR USD GBP YEN)
+      LANGUAGES      = %w(CASTILIAN CATALAN ENGLISH FRENCH)
+      COUNTRIES      = %w(SPAIN FRANCE GREATBRITAN)
+      RESPONSES      = %w(VALID FAKE REJECT UNFORMATED)
+
       module Responses
         VALID      = 0
         REJECTED   = 1
@@ -79,7 +80,7 @@ unless defined?(TPV_LOADED)
       end
       module Languages
         CATALAN    = 'ca'
-        CASTILLIAN = 'es'
+        CASTILIAN  = 'es'
         FRENCH     = 'fr'
         ENGLISH    = 'en'
       end
@@ -88,6 +89,28 @@ unless defined?(TPV_LOADED)
         FRANCE      = 'FR'
         GREATBRITAN = 'GB'
       end
+      def fields_pairs
+        { 
+          :modelopago    => :payment_method,
+          :idterminal    => :terminal,
+          :idcomercio    => :merchant_code,
+          :idtransaccion => :order_id,
+          :soporte       => :system,
+          :canal         => :channel,
+          :mediopago     => "PAYMENT_METHODS",
+          :moneda        => :currency,
+          :importe       => :amount,
+          :urlcomercio   => :notification_url,
+          :localizador   => :reference,
+          :firma         => :payment_signature 
+        }
+      end
+      def fields_values
+         fields_with_value = {}
+         # symbol => method, string => CONSTANTS, others => self
+         fields_pairs.each_pair{ |key,value| fields_with_value[key] = (value.symbol? ? self.send(value) : value.string? ? eval(value) : value)}
+         return fields_with_value
+       end
     end
   end
 

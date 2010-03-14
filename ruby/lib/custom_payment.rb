@@ -1,4 +1,4 @@
-%w(rubygems YAML ERB digest/sha1 haml).each{|lib| require lib}
+%w(rubygems YAML ERB digest/sha1 haml net/http rexml/document).each{|lib| require lib}
 %w(constants util).each{|file| require "#{File.dirname(__FILE__)}/#{file}"}
 
 
@@ -67,9 +67,10 @@ class PaymentValidation
   include TPV::Bbva
   attr_accessor :terminal, :merchant_code, :tpvurl, :currency, :reference, :notification_url, :language, :keycode
   attr_reader :dark_key
-  def initialize(fields,options={})
+  def initialize(response,options={})
     options = {:load_config => {}}.merge(options)
-    @fields = fields.keyfy!
+    
+    request(response)
     if all_expected_fields_received?
       @fields[:importe].sub!(',','.')
       valid_format_response? && @fields[:estado] = @fields[:estado].to_i
@@ -78,6 +79,17 @@ class PaymentValidation
     @unknown_properties = []
     load(options[:load_config])
 
+  end
+  def xml_response_error?
+    doc.root.name == 'tpv' && doc.root.elements.first.name == "oppago" && doc.root.elements.first.elements.first.name == "coderror"
+    
+  end
+  
+  def request(xml_response)
+    @fields = {}
+    doc = REXML::Document.new(xml_response)
+    # tpv/oppago || tpv/respago
+    !doc.root.nil? && doc.root.elements.first.elements.each{|e| @fields[e.name.to_sym] = e.text}
   end
   
   def validate_response
@@ -102,15 +114,19 @@ class PaymentValidation
   def well_formated_response?
     all_expected_fields_received? && validate_bank_response_signature
   end
-  def calculate_bank_signature
+  def signature_string_base
     # When invalid format response, 'estado' is not received, 
     # so lets put empty string on its place.
     status = valid_format_response? ? @fields[:estado] : ''
     #Amount should be formated without , nor . and 2 decimal digits
     amount = PaymentValidation.format_less_amount(@fields[:importe])
-    TPV::Crypt::sha1("#{@fields[:idterminal]}#{@fields[:idcomercio]}#{@fields[:idtransaccion]}#{amount}#{@fields[:moneda]}#{status}#{@fields[:coderror]}#{@fields[:codautorizacion]}#{deofuscate_key}")
+    "#{@fields[:idterminal]}#{@fields[:idcomercio]}#{@fields[:idtransaccion]}#{amount}#{@fields[:moneda]}#{status}#{@fields[:coderror]}#{@fields[:codautorizacion]}#{deofuscate_key}"
+  end
+  def calculate_bank_signature
+    TPV::Crypt::sha1(signature_string_base)
   end
   
+
   def validate_bank_response_signature
     #Does received signature is the expected one? 
     @fields[:firma] == calculate_bank_signature
@@ -145,17 +161,20 @@ class CustomPayment
   include TPV::Base
   include TPV::Bbva
   attr_accessor :terminal, :merchant_code, :tpvurl, :currency, :reference, :notification_url, :language, :keycode
-  attr_reader :amount, :dark_key
-  alias_method :non_formated_amount, :amount
+  attr_reader :amount, :dark_key, :payment_method, :system
+  alias_method :unformated_amount, :amount
   def initialize(given_amount, options={})
     options = {:order_id => '', :load_config => {}}.merge(options)
     #Payment properties
     @amount = ''
     @description = ''
     @currency = Currencies::EUR
-    @terminal = 1
+    @terminal = ''
+    @payment_method = PaymentModels::SECURE_3D #Default
     @transaction_type = 0
+    @channel = Channels::INTERNET
     @signature = ''
+    @system = CARD
     @merchant_code = ''
     @key = ''
     @language = Languages::CATALAN
@@ -173,11 +192,26 @@ class CustomPayment
     
     #Loading data
     load(options[:load_config])
+    @tpvurl ||= TPVURL
     send :amount=, given_amount
     order_id(options[:order_id])
   end
-  def self.fields
-    {:numtarjeta => :text, :fechacaducidad => :date, :cvv2 => :text, :modelopago => :hidden, :idterminal => :hidden, :idcomercio => :hidden, :idtransaccion => :hidden, :mediopago => :hidden, :soporte => :hidden, :canal => :hidden, :moneda => :hidden, :importe => :hidden, :urlcomercio => :hidden, :localizador => :hidden, :firma => :hidden}
+  def self.fields_type
+    {:numtarjeta     => :text,
+     :fechacaducidad => :date,
+     :cvv2           => :text,
+     :modelopago     => :hidden,
+     :idterminal     => :hidden,
+     :idcomercio     => :hidden,
+     :idtransaccion  => :hidden,
+     :mediopago      => :hidden,
+     :soporte        => :hidden,
+     :canal          => :hidden,
+     :moneda         => :hidden,
+     :importe        => :hidden,
+     :urlcomercio    => :hidden,
+     :localizador    => :hidden,
+     :firma          => :hidden}
   end
   def public_fields_values(options={})
     options = {:force => false}.merge(options)
@@ -195,12 +229,7 @@ class CustomPayment
     (amount.to_f / 100).to_f
   end
   def payment_signature
-    @signature.empty? && @signature = TPV::Crypt::sha1("#{terminal}#{merchant_code}#{order_id}#{non_formated_amount}#{currency}#{reference}#{deofuscated_key}")
+    @signature.empty? && @signature = TPV::Crypt::sha1("#{terminal}#{merchant_code}#{order_id}#{unformated_amount}#{currency}#{reference}#{deofuscated_key}")
     return @signature
   end
-  private
-  def fields_values
-    { :modelopago => 4, :idterminal => terminal, :idcomercio => merchant_code, :idtransaccion => order_id, :mediopago => 4, :soporte => 1, :canal => 1, :moneda => currency, :importe => formated_amount, :urlcomercio => notification_url, :localizador => reference, :firma => payment_signature }
-  end
-
 end

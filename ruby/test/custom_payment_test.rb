@@ -7,10 +7,13 @@ module TPV
 end
 require 'rubygems'
 require "test/unit"
-require "#{File.dirname(__FILE__)}/../lib/custom_payment"
-require "#{File.dirname(__FILE__)}/../lib/ruby_utils"
+%w(custom_payment ruby_utils).each{|file|  require File.join(File.dirname(__FILE__),'..','lib',file)}
+
 class TestOfPayment < Test::Unit::TestCase
   include TPV::Bbva
+  def setup
+    
+  end
   def test_hidden_helper
     helpers = CustomPaymentHelpers.new
     haml = helpers.haml.capture_haml do
@@ -148,107 +151,55 @@ HTML
     assert_equal("12345678B06666666***", payment.generate_shine_key)
     assert_equal("790999961C55A340005D", payment.deofuscate_key)
     
-    # Receiving fake signature on a valid operation response
-    fields_for_invalid_signature = {
-      'idterminal' =>'631002',
-      'idcomercio' =>'B06666666600001',
-      'idtransaccion' => '00312023301',
-      'importe' => '12,4',
-      'moneda' => Currencies::EUR,
-      'estado' => '2',
-      'coderror' => '000',
-      'codautorizacion' => '000065',
-      'firma' => 'lkajdsflkñajsdflñajdf'
-    }
-    validation = PaymentValidation.new(fields_for_invalid_signature,{:load_config => {:file => 'tpv.bbva.yml'}})
-    assert(!validation.send(:validate_bank_response_signature))
     
-
+    
+    # Receiving fake signature on a valid operation response
+    fields_for_invalid_signature = bank_response({'estado' => Statuses::ACCEPTED})
+    validation = PaymentValidation.new(fields_for_invalid_signature,{:load_config => {:file => 'tpv.bbva.yml'}})
+    # Expected signature base string before sha1 operation
+    assert_equal("631002B066666666000010031202330112409782000000065#{validation.send(:deofuscate_key)}", validation.send(:signature_string_base))
+    assert(!validation.send(:validate_bank_response_signature))
   end
+
   def test_Receiving_valid_signature_on_a_valid_operation_response
     # Receiving valid signature on a valid operation response
-    fields_for_valid_operation = {
-      'idterminal' =>'631002',
-      'idcomercio' =>'B06666666600001',
-      'idtransaccion' => '00312023301',
-      'importe' => '12,4',
-      'moneda' => Currencies::EUR,
-      'estado' => '2',
-      'coderror' => '000',
-      'codautorizacion' => '000065',
-      'firma' => 'lkajdsflkñajsdflñajdf'
-    }
-    fields_for_valid_operation['firma'] = '8359B01544BB26AE0ABEAB45A9F931D9CDE16198'
+    fields_for_valid_operation = bank_response({'estado' => Statuses::ACCEPTED, 'firma' => '8359B01544BB26AE0ABEAB45A9F931D9CDE16198'})
     validation = PaymentValidation.new(fields_for_valid_operation,{:load_config => {:file => 'tpv.bbva.yml'}})
-    assert_equal(Responses::VALID, validation.validate_response[:response]) 
+    assert_equal('8359B01544BB26AE0ABEAB45A9F931D9CDE16198', validation.send(:calculate_bank_signature))
+    assert_equal(Responses::VALID, validation.validate_response[:response])
   end
+
 
   def test_Receiving_a_fake_response
     # Receiving a fake response
-    fields_for_fake_operation = {
-      'idterminal' =>'631002',
-      'idcomercio' =>'B06666666600001',
-      'idtransaccion' => '00312023301',
-      'importe' => '12,4',
-      'moneda' => Currencies::EUR,
-      'estado' => '2',
-      'coderror' => '000',
-      'codautorizacion' => '000065',
-      'firma' => 'lkajdsflkñajsdflñajdf'
-    }
-    fields_for_fake_operation['estado'] = Statuses::DENIED
-    fields_for_fake_operation['firma'] = '8359B01545BB26GE0ABEAB45A9F931D9CDE16198'
+    fields_for_fake_operation =  bank_response({'estado' => Statuses::DENIED,   'firma' => '8359B01545BB26GE0ABEAB45A9F931D9CDE16198'})
     validation = PaymentValidation.new(fields_for_fake_operation,{:load_config => {:file => 'tpv.bbva.yml'}})
     assert_equal(Responses::FAKE, validation.validate_response[:response])
     
-    fields_for_fake_response = {}
+    fields_for_fake_response = ""
     validation = PaymentValidation.new(fields_for_fake_response,{:load_config => {:file => 'tpv.bbva.yml'}})
     assert_equal(Responses::FAKE, validation.validate_response[:response])
   end
   def test_Receiving_a_rejected_response
     # Receiving a rejected response
-    fields_for_rejected_operation = {
-      'idterminal' =>'631002',
-      'idcomercio' =>'B06666666600001',
-      'idtransaccion' => '00312023301',
-      'importe' => '12,4',
-      'moneda' => Currencies::EUR,
-      'estado' => '',
-      'coderror' => '000',
-      'codautorizacion' => '000065',
-      'firma' => 'lkajdsflkñajsdflñajdf'
-    }
-    fields_for_rejected_operation['estado'] = (Statuses::DENIED).to_s
-    fields_for_rejected_operation['firma'] = '2C08FC54AA522B64C1C86089F32400BBB07AC4D0'
-    validation = PaymentValidation.new(fields_for_rejected_operation,{:load_config => {:file => 'tpv.bbva.yml'}})
+    fields_for_rejected_operation = bank_response({'estado' => Statuses::DENIED, 'firma' => '2C08FC54AA522B64C1C86089F32400BBB07AC4D0'})
+    validation = PaymentValidation.new(fields_for_rejected_operation,{:load_config => {:file => 'tpv.bbva.yml'}}) 
+    assert_equal('2C08FC54AA522B64C1C86089F32400BBB07AC4D0', validation.send(:calculate_bank_signature))
     assert_equal(Responses::REJECTED, validation.validate_response[:response])
   end
   def test_Receiving_a_unformated_response
     # Receiving a unformated response
-    fields_for_unformated_operation = {
-      'idterminal' =>'631002',
-      'idcomercio' =>'B06666666600001',
-      'idtransaccion' => '00312023301',
-      'importe' => '12,4',
-      'moneda' => Currencies::EUR,
-      'estado' => '2',
-      'coderror' => '000',
-      'codautorizacion' => '000065',
-      'firma' => 'lkajdsflkñajsdflñajdf'
-    }
-    fields_for_unformated_operation.delete('estado')
-    fields_for_unformated_operation['firma'] = '8569FA4C6DB03039A269F5E006392E15C31FF2A5'
+    fields_for_unformated_operation = bank_response({'firma' => '8569FA4C6DB03039A269F5E006392E15C31FF2A5'})
     validation = PaymentValidation.new(fields_for_unformated_operation,{:load_config => {:file => 'tpv.bbva.yml'}})
     assert_equal(Responses::UNFORMATED, validation.validate_response[:response])
   end
-=begin
-    #assert(validation.validate_signature)
-    #payment.setMerchantCode('201920191')
-    #payment.setNotificationUrl('http://www.test.cat')
-    #$resultat = 'b7571e2de2c2d0b7a8064f5fa620ef4426a01352'
-    #$cadena = TPV::Crypt.sha1('123500292929292019201919780http://www.test.cath2u282kMks01923kmqpo')
-    #assert_equal(payment.getSignature,$resultat)
-    #assert_equal($cadena,$resultat)
+
+  def bank_response(options={})
+    options = {'firma' => 'lkajdsflkñajsdflñajdf', 'date' => '09/09/2002 23:09:00'}.merge(options)
+
+    text = File.get_content(File.join(File.dirname(__FILE__),'fixtures','xml','tpv_respago.xml.haml'))
+    obj = Object.new
+    Haml::Engine.new(text).def_method(obj, :render, :options)
+    obj.render(:options => options)
   end
-=end
 end
